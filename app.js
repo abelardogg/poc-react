@@ -41,6 +41,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride('_method'));
 
+app.get('/',checkIfuserIsLogedin, (req, res) => {
+  let view = 'home';
+  let model = {user: req.user.email};
+
+  res.render(view, model);
+});
 
 app.get('/register',userIsLogedout, (req, res) => {
   let view = 'register';
@@ -72,19 +78,11 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/home',
+  successRedirect: '/',
   failureRedirect: '/error',
   failureFlash: true
 }));
 
-
-
-app.get('/home',checkIfuserIsLogedin, (req, res) => {
-    let view = 'index';
-    let model = {};
-
-    res.render(view, model);
-});
 
 app.get('/error', (req, res) => {
     let view = 'error';
@@ -111,7 +109,7 @@ return res.redirect('/login');
 
 function userIsLogedout(req, res, next){
   if(req.isAuthenticated()){
-    return res.redirect('/home');
+    return res.redirect('/');
   }
 next()
 }
